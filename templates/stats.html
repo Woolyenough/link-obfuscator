@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Statistics - Link Shortener</title>
+</head>
+<body>
+    <h2>Link Statistics</h2>
+    
+    <div style="margin-bottom: 20px;">
+        <h3>Overview</h3>
+        <p><strong>Total Links:</strong> {{ total_links }}</p>
+        <p><strong>Total Clicks:</strong> {{ total_clicks }}</p>
+        <p><strong>Average Clicks per Link:</strong> {{ "%.2f"|format(total_clicks / total_links) if total_links > 0 else "0.00" }}</p>
+    </div>
+    
+    <div>
+        <h3>Top 10 Most Clicked Links</h3>
+        {% if top_links %}
+        <table border="1" style="border-collapse: collapse; width: 100%;">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Short Code</th>
+                    <th>Original URL</th>
+                    <th>Clicks</th>
+                    <th>Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for link in top_links %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td><a href="/{{ link.code }}" target="_blank">{{ domain }}/{{ link.code }}</a></td>
+                    <td>{{ link.url }}</td>
+                    <td>{{ link.click_count }}</td>
+                    <td>{{ link.created_at.strftime('%Y-%m-%d %H:%M UTC') if link.created_at }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No links found.</p>
+        {% endif %}
+    </div>
+    
+    <div style="margin-top: 20px;">
+        <a href="/">Back to Dashboard</a> | 
+        <a href="/logout">Logout</a>
+    </div>
+</body>
+</html>

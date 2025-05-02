@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Link Obfuscator</title>
+</head>
+<body>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div style="background-color: #dff0d8; border: 1px solid #d6e9c6; color: #3c763d; padding: 10px; margin-bottom: 20px; border-radius: 4px;">
+        {% for message in messages %}
+          <p>{{ message }}</p>
+        {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    
+    <h2>Shorten a Link</h2>
+    <form method="post" action="/shorten">
+        <input type="url" name="url" placeholder="Paste your link here" required>
+        <select name="mode">
+            {% for key, name in modes.items() %}
+            <option value="{{ key }}">{{ name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Shorten</button>
+    </form>
+    <h3>Shortened Links</h3>
+    {% if links %}
+    <table border="1" style="border-collapse: collapse; width: 100%;">
+        <thead>
+            <tr>
+                <th>Short Code</th>
+                <th>Original URL</th>
+                <th>Mode</th>
+                <th>Created</th>
+                <th>Clicks</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for link in links %}
+            <tr>
+                <td><a href="/{{ link.code }}" target="_blank">{{ domain }}/{{ link.code }}</a></td>
+                <td>{{ link.url }}</td>
+                <td>{{ link.mode }}</td>
+                <td>{{ link.created_at.strftime('%Y-%m-%d %H:%M UTC') if link.created_at }}</td>
+                <td>{{ link.click_count }}</td>
+                <td>
+                    <form method="post" action="/delete/{{ link.id }}" style="display: inline;">
+                        <button type="submit" onclick="return confirm('Are you sure?')" style="color: red;">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No links created yet.</p>
+    {% endif %}
+    
+    <div style="margin-top: 20px;">
+        <a href="/stats">View Statistics</a> | 
+        <a href="/logout">Logout</a>
+    </div>
+</body>
+</html>
